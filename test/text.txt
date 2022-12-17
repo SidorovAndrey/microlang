@@ -1,0 +1,5 @@
+myVar : int32
+my2var : int32
+
+myVar = 5
+my2var = 1234
