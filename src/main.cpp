@@ -7,6 +7,7 @@
 #include "Result.h"
 #include "Lexer.h"
 #include "AST.h"
+#include "AstVisitor.h"
 
 std::string getTokenTypeName(const Lexer::TokenType type) {
     switch(type) {
@@ -33,7 +34,7 @@ std::string getTokenTypeName(const Lexer::TokenType type) {
     }
 }
 
-std::string getNodeTypeName(const AST::NodeType type) {
+/*std::string getNodeTypeName(const AST::NodeType type) {
     switch(type) {
         case AST::NodeType::PROGRAM_ROOT:
             return "PROGRAM_ROOT";
@@ -48,14 +49,14 @@ std::string getNodeTypeName(const AST::NodeType type) {
         default:
             return "UNKNOWN";
     }
-}
+}*/
 
-void printNode(const AST::Node& node, int nest) {
+/*void printNode(const AST::Node& node, int nest) {
     printf("%*s type: %s\t name: %s\n", nest, "", getNodeTypeName(node.type).c_str(), node.name.c_str());
     for (AST::Node n : node.children) {
         printNode(n, nest + 1);
     }
-}
+}*/
 
 int main(int argc, char** argv) {
     if (argc < 2) {
@@ -78,8 +79,12 @@ int main(int argc, char** argv) {
         }
     }
 
-    Result<AST::Node> treeResult = AST::buildTree(lexerResult.data);
+    Result<AST::ProgramExpression> treeResult = AST::buildTree(lexerResult.data);
+    AstVisitor visitor;
+    treeResult.data.generate(visitor);
     // TODO: test treeResult error cases
-    printNode(treeResult.data, 0);
+    //printNode(treeResult.data, 0);
+
+
 }
 

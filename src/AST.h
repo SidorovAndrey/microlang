@@ -5,30 +5,58 @@
 #include <vector>
 #include <string>
 
+#include <llvm/IR/Value.h>
+
 #include "Result.h"
 
+class AstVisitor;
+
 namespace AST {
-    enum class NodeType {
-        PROGRAM_ROOT,
-        INT_LITERAL,
-        ASSIGN, // at the right of '=' operator
-        FUNCTION_CALL, // '<name>()' call
-        VARIABLE_DECLARATION, // by the both side of ':'
-        VARIABLE,
-        PLUS_OPERATION, // by the both side of '+'
-        MINUS_OPERATION, // by the both side of '-'
-        MULTIPLY_OPERATION, // by the both side of '*'
-        DIVIDE_OPERATION, // by the both side of '*'
-        // TODO: how to represent (...) operation (brackets in arithmetic operation)?
-    };
-
-    struct Node {
-        NodeType type;
+    struct Identifier {
         std::string name;
-        std::vector<uint8_t> value;
-        std::vector<Node> children;
+
+        Identifier(const std::string& name) : name(name) {};
+        virtual ~Identifier() = default;
+
+        virtual llvm::Value* generate(AstVisitor& visitor) = 0;
     };
 
-    Result<Node> buildTree(const std::vector<Lexer::Token>& tokens);
-}
+    struct VariableIdentifier : public Identifier {
+        VariableIdentifier(const std::string& name) : Identifier(name) {};
+        virtual llvm::Value* generate(AstVisitor& visitor) override;
+    };
+
+
+    struct Expression {
+        virtual ~Expression() = default;
+        virtual llvm::Value* generate(AstVisitor& visitor) = 0;
+    };
+
+    struct ProgramExpression : public Expression {
+        std::vector<std::unique_ptr<Expression>> expressions;
+        virtual llvm::Value* generate(AstVisitor& visitor) override;
+    };
+
+    struct VariableDeclarationExpression : public Expression {
+        std::string identifier;
+        std::string variableType;
+        VariableDeclarationExpression(const std::string& identifier, const std::string& variableType) : identifier(identifier), variableType(variableType) {};
+        virtual llvm::Value* generate(AstVisitor& visitor) override;
+    };
+
+    struct AssignExpression : public Expression {
+        std::unique_ptr<Identifier> identifier;
+        std::unique_ptr<Expression> assignExpression;
+        AssignExpression(Identifier* id, Expression* expression) : identifier(id), assignExpression(expression) {};
+        virtual llvm::Value* generate(AstVisitor& visitor) override;
+    };
+
+    struct Int32LiteralExpression : public Expression {
+        int32_t value;
+        Int32LiteralExpression(int32_t value) : value(value) {};
+        virtual llvm::Value* generate(AstVisitor& visitor) override;
+    };
+
+    Result<ProgramExpression> buildTree(const std::vector<Lexer::Token>& tokens);
+};
 
