@@ -12,6 +12,8 @@ struct Result {
         : isSuccess(isSuccess), errorMessage(errorMessage), data(std::move(data))
     {}
 
+    Result(const Result<T>&) = delete;
+
     Result(Result<T>&& item) 
         : isSuccess(item.isSuccess), errorMessage(item.errorMessage), data(item.data)
     {};
