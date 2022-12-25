@@ -80,8 +80,11 @@ int main(int argc, char** argv) {
     }
 
     Result<AST::ProgramExpression> treeResult = AST::buildTree(lexerResult.data);
+
     AstVisitor visitor;
-    treeResult.data.generate(visitor);
+    visitor.createProgram(treeResult.data);
+    visitor.configureTarget();
+    visitor.dumpCode();
     // TODO: test treeResult error cases
     //printNode(treeResult.data, 0);
 

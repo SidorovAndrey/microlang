@@ -9,10 +9,6 @@ namespace AST {
         return visitor.visit(*this);
     }
 
-    llvm::Value* ProgramExpression::generate(AstVisitor &visitor) {
-        return visitor.visit(*this);
-    }
-
     llvm::Value* VariableDeclarationExpression::generate(AstVisitor &visitor) {
         return visitor.visit(*this);
     }

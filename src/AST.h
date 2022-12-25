@@ -32,9 +32,8 @@ namespace AST {
         virtual llvm::Value* generate(AstVisitor& visitor) = 0;
     };
 
-    struct ProgramExpression : public Expression {
+    struct ProgramExpression {
         std::vector<std::unique_ptr<Expression>> expressions;
-        virtual llvm::Value* generate(AstVisitor& visitor) override;
     };
 
     struct VariableDeclarationExpression : public Expression {
