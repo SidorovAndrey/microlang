@@ -20,7 +20,7 @@ class AstVisitor {
 
         void createProgram(const AST::ProgramExpression& expression);
         void configureTarget();
-        void dumpCode();
+        std::string dumpCode();
 
         llvm::Value* visit(const AST::VariableIdentifier& expression);
 

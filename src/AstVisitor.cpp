@@ -7,10 +7,26 @@
 #include <llvm/IR/Verifier.h>
 #include <llvm/Support/Host.h>
 
+
 AstVisitor::AstVisitor() noexcept {
     context = std::make_unique<llvm::LLVMContext>();
     builder = std::unique_ptr<llvm::IRBuilder<>>(new llvm::IRBuilder<>(*context));
     module = std::make_unique<llvm::Module>("Module", *context);
+}
+
+void addOutputText(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm::Module& module, std::string text) {
+
+    std::vector<llvm::Type*> printf_arg_types;
+    printf_arg_types.push_back(llvm::Type::getInt8PtrTy(context));
+    llvm::FunctionType* printf_type = llvm::FunctionType::get(llvm::Type::getInt32Ty(context), printf_arg_types, true);
+    llvm::Function* printf_func = llvm::Function::Create(printf_type, llvm::Function::ExternalLinkage, llvm::Twine("printf"), module);
+    printf_func->setCallingConv(llvm::CallingConv::C);
+
+    llvm::Constant* str = llvm::ConstantDataArray::getString(context, text);
+    llvm::GlobalVariable* strVar = new llvm::GlobalVariable(module, llvm::ArrayType::get(llvm::IntegerType::get(context, 8), text.size() + 1 /*+1 is \0 at the end*/), true, llvm::GlobalValue::PrivateLinkage, str, ".str");
+
+    llvm::CallInst* call = builder.CreateCall(printf_func, strVar);
+    call->setTailCall(false);
 }
 
 void AstVisitor::createProgram(const AST::ProgramExpression& expression) {
@@ -32,12 +48,7 @@ void AstVisitor::createProgram(const AST::ProgramExpression& expression) {
         ex->generate(*this);
     }
 
-    // testing printf lined from c -- it has segfault err
-    //llvm::Function* printf = module->getFunction("printf");
-    //std::vector<llvm::Value*> args = {
-    //    builder->CreateGlobalStringPtr("test hello world", "hwstring")
-    //};
-    //builder->CreateCall(printf->getFunctionType(), printf, args, "printf");
+    addOutputText(*context, *builder, *module, "Hello world!");
 
     llvm::APInt returnValue(32, (uint32_t)0, true);
     builder->CreateRet(llvm::ConstantInt::get(*context, returnValue));
@@ -49,8 +60,11 @@ void AstVisitor::configureTarget() {
     module->setTargetTriple(target);
 }
 
-void AstVisitor::dumpCode() {
-    module->print(llvm::outs(), nullptr);
+std::string AstVisitor::dumpCode() {
+    std::string result;
+    llvm::raw_string_ostream stream(result);
+    module->print(stream, nullptr);
+    return result;
 }
 
 llvm::Value* AstVisitor::visit(const AST::VariableIdentifier& expression) {
