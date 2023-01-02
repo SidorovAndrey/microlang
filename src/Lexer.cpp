@@ -126,14 +126,14 @@ namespace Lexer {
             std::string line = text.substr(i, lineEnd - i + 1);
             std::string error = parseLine(line, tokens, row, id);
             if (error != "") {
-                return Result<std::vector<Token>>(false, error, tokens);
+                return Result<std::vector<Token>>::Failure(error, tokens);
             }
 
             i = lineEnd + 1;
             ++row;
         }
 
-        return Result<std::vector<Token>>(true, "", tokens);
+        return Result<std::vector<Token>>::Ok(tokens);
     }
 }
 

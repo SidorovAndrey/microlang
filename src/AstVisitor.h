@@ -6,6 +6,7 @@
 #include <llvm/IR/IRBuilder.h>
 
 #include "AST.h"
+#include "Result.h"
 
 class AstVisitor {
     private:
@@ -18,14 +19,14 @@ class AstVisitor {
     public:
         AstVisitor() noexcept;
 
-        void createProgram(const AST::ProgramExpression& expression);
+        VoidResult createProgram(const AST::ProgramExpression& expression);
         void configureTarget();
         std::string dumpCode();
 
-        llvm::Value* visit(const AST::VariableIdentifier& expression);
+        Result<llvm::Value*> visit(const AST::VariableIdentifier& expression);
 
-        llvm::Value* visit(const AST::VariableDeclarationExpression& expression);
-        llvm::Value* visit(const AST::AssignExpression& expression);
-        llvm::Value* visit(const AST::Int32LiteralExpression& expression);
+        Result<llvm::Value*> visit(const AST::VariableDeclarationExpression& expression);
+        Result<llvm::Value*> visit(const AST::AssignExpression& expression);
+        Result<llvm::Value*> visit(const AST::Int32LiteralExpression& expression);
 };
 

@@ -29,7 +29,7 @@ void addOutputText(llvm::LLVMContext& context, llvm::IRBuilder<>& builder, llvm:
     call->setTailCall(false);
 }
 
-void AstVisitor::createProgram(const AST::ProgramExpression& expression) {
+VoidResult AstVisitor::createProgram(const AST::ProgramExpression& expression) {
     std::cout << "Building program expression." << "\n";
 
     llvm::FunctionType* mainType = llvm::FunctionType::get(
@@ -53,6 +53,8 @@ void AstVisitor::createProgram(const AST::ProgramExpression& expression) {
     llvm::APInt returnValue(32, (uint32_t)0, true);
     builder->CreateRet(llvm::ConstantInt::get(*context, returnValue));
     llvm::verifyFunction(*main);
+
+    return VoidResult::Ok();
 }
 
 void AstVisitor::configureTarget() {
@@ -67,15 +69,18 @@ std::string AstVisitor::dumpCode() {
     return result;
 }
 
-llvm::Value* AstVisitor::visit(const AST::VariableIdentifier& expression) {
+Result<llvm::Value*> AstVisitor::visit(const AST::VariableIdentifier& expression) {
     std::cout << "Building variable identifier: " << expression.name << "\n";
 
     llvm::Value* value = variables[expression.name];
-    // TODO: handle if value not found; handle all the errors
-    return value;
+    if (!value) {
+        return Result<llvm::Value*>::Failure("Cannot find value for \'" + expression.name, nullptr);
+    }
+
+    return Result<llvm::Value*>::Ok(value);
 }
 
-llvm::Value* AstVisitor::visit(const AST::VariableDeclarationExpression& expression) {
+Result<llvm::Value*> AstVisitor::visit(const AST::VariableDeclarationExpression& expression) {
     std::cout << "Building variable declaration expression: \'" << expression.identifier << "\' of type \'" << expression.variableType << "\'\n";
 
     llvm::Value* value = llvm::ConstantInt::getSigned(llvm::Type::getInt32Ty(*context), 0);
@@ -89,23 +94,30 @@ llvm::Value* AstVisitor::visit(const AST::VariableDeclarationExpression& express
 
     variables[expression.identifier] = var;
     builder->CreateStore(value, var);
-    return value;
+    return Result<llvm::Value*>::Ok(value);
 }
 
-llvm::Value* AstVisitor::visit(const AST::AssignExpression& expression) {
+Result<llvm::Value*> AstVisitor::visit(const AST::AssignExpression& expression) {
     std::cout << "Building assign expression: \'" << expression.identifier->name << "\'\n";
 
-    llvm::Value* val = expression.assignExpression->generate(*this);
-    llvm::Value* id = expression.identifier->generate(*this);
+    Result<llvm::Value*> value = expression.assignExpression->generate(*this);
+    if (!value.isSuccess) {
+        return std::move(value);
+    }
 
-    builder->CreateStore(val, id);
-    return val;
+    Result<llvm::Value*> id = expression.identifier->generate(*this);
+    if (!id.isSuccess) {
+        return std::move(id);
+    }
+
+    builder->CreateStore(value.data, id.data);
+    return Result<llvm::Value*>::Ok(value.data);
 }
 
-llvm::Value* AstVisitor::visit(const AST::Int32LiteralExpression& expression) {
+Result<llvm::Value*> AstVisitor::visit(const AST::Int32LiteralExpression& expression) {
     std::cout << "Building int32 literal expression: " << expression.value << "\n";
 
-    llvm::Value* val = llvm::ConstantInt::getSigned(llvm::Type::getInt32Ty(*context), expression.value);
-    return val;
+    llvm::Value* value = llvm::ConstantInt::getSigned(llvm::Type::getInt32Ty(*context), expression.value);
+    return Result<llvm::Value*>::Ok(value);
 }
 
