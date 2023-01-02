@@ -1,7 +1,6 @@
 #include "AST.h"
 
 #include <string>
-#include <iostream>
 
 #include "AstVisitor.h"
 #include "Utils.h"
