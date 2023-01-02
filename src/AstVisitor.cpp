@@ -156,7 +156,6 @@ Result<llvm::Value*> AstVisitor::visit(const AST::BinaryExpression& expression) 
 
     Result<llvm::Value*> right = expression.right->generate(*this);
     if (!right.isSuccess) {
-        std::cout << " FAIL 2 here " << right.errorMessage << "\n";
         return std::move(right);
     }
 
