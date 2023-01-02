@@ -28,5 +28,6 @@ class AstVisitor {
         Result<llvm::Value*> visit(const AST::VariableDeclarationExpression& expression);
         Result<llvm::Value*> visit(const AST::AssignExpression& expression);
         Result<llvm::Value*> visit(const AST::Int32LiteralExpression& expression);
+        Result<llvm::Value*> visit(const AST::BinaryExpression& expression);
 };
 

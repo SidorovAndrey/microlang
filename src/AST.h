@@ -75,6 +75,24 @@ namespace AST {
         virtual Result<llvm::Value*> generate(AstVisitor& visitor) override;
     };
 
+    enum class BinaryExpressionType {
+        Add,
+        Subtract,
+        Multiply,
+        Divide,
+    };
+
+    struct BinaryExpression : public Expression {
+        BinaryExpressionType type;
+        std::unique_ptr<Identifier> left;
+        std::unique_ptr<Identifier> right;
+
+        BinaryExpression(BinaryExpressionType type, Identifier* left, Identifier* right) : type(type), left(left), right(right) {};
+        BinaryExpression(BinaryExpression&& val) : left(std::move(val.left)), right(std::move(val.right)) {};
+
+        virtual Result<llvm::Value*> generate(AstVisitor& visitor) override;
+    };
+
     Result<ProgramExpression> buildTree(const std::vector<Lexer::Token>& tokens);
 };
 

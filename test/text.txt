@@ -2,4 +2,16 @@ myVar : int32
 my2var : int32
 
 myVar = 5
-my2var = 1234
+my2var = 10
+
+myVar3 : int32
+myVar3 = myVar + my2var
+
+myVar4 : int32
+myVar4 = my2var - myVar
+
+myVar5 : int32
+myVar5 = my2var * myVar
+
+myVar6 : int32
+myVar6 = my2var / myVar
