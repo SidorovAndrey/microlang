@@ -10,11 +10,11 @@
 
 class AstVisitor {
 private:
-    std::unique_ptr<llvm::LLVMContext> context;
-    std::unique_ptr<llvm::IRBuilder<>> builder;
-    std::unique_ptr<llvm::Module> module;
+    std::unique_ptr<llvm::LLVMContext> m_context;
+    std::unique_ptr<llvm::IRBuilder<>> m_builder;
+    std::unique_ptr<llvm::Module> m_module;
 
-    std::unordered_map<std::string, llvm::AllocaInst*> variables;
+    std::unordered_map<std::string, llvm::AllocaInst*> m_variables;
 
 public:
     AstVisitor() noexcept;

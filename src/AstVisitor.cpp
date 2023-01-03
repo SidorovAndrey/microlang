@@ -9,9 +9,9 @@
 
 
 AstVisitor::AstVisitor() noexcept {
-    context = std::make_unique<llvm::LLVMContext>();
-    builder = std::unique_ptr<llvm::IRBuilder<>>(new llvm::IRBuilder<>(*context));
-    module = std::make_unique<llvm::Module>("Module", *context);
+    m_context = std::make_unique<llvm::LLVMContext>();
+    m_builder = std::unique_ptr<llvm::IRBuilder<>>(new llvm::IRBuilder<>(*m_context));
+    m_module = std::make_unique<llvm::Module>("Module", *m_context);
 }
 
 // TODO: do not redeclare printf each call
@@ -51,16 +51,16 @@ VoidResult AstVisitor::createProgram(const AST::ProgramExpression& expression) {
     std::cout << "Building program expression." << "\n";
 
     llvm::FunctionType* mainType = llvm::FunctionType::get(
-        llvm::IntegerType::getInt32Ty(*context),
+        llvm::IntegerType::getInt32Ty(*m_context),
         std::vector<llvm::Type*>(), false);
 
     llvm::Function* main = llvm::Function::Create(
-        mainType, llvm::Function::ExternalLinkage, "main", module.get());
+        mainType, llvm::Function::ExternalLinkage, "main", m_module.get());
 
-    llvm::BasicBlock* mainBasicBlock = llvm::BasicBlock::Create(*context, "entry", main);
-    builder->SetInsertPoint(mainBasicBlock);
+    llvm::BasicBlock* mainBasicBlock = llvm::BasicBlock::Create(*m_context, "entry", main);
+    m_builder->SetInsertPoint(mainBasicBlock);
 
-    variables.clear();
+    m_variables.clear();
 
     for (auto& ex : expression.expressions) {
         auto res = ex->generate(*this);
@@ -74,10 +74,10 @@ VoidResult AstVisitor::createProgram(const AST::ProgramExpression& expression) {
     //addOutputTextForValue(*context, *builder, *module, "myVar3 = %d\n", builder->CreateLoad(llvm::Type::getInt32Ty(*context), variables["myVar3"]));
     //addOutputTextForValue(*context, *builder, *module, "myVar4 = %d\n", builder->CreateLoad(llvm::Type::getInt32Ty(*context), variables["myVar4"]));
     //addOutputTextForValue(*context, *builder, *module, "myVar5 = %d\n", builder->CreateLoad(llvm::Type::getInt32Ty(*context), variables["myVar5"]));
-    addOutputTextForValue(*context, *builder, *module, "myVar6 = %d\n", builder->CreateLoad(llvm::Type::getInt32Ty(*context), variables["myVar6"]));
+    addOutputTextForValue(*m_context, *m_builder, *m_module, "myVar6 = %d\n", m_builder->CreateLoad(llvm::Type::getInt32Ty(*m_context), m_variables["myVar6"]));
 
     llvm::APInt returnValue(32, (uint32_t)0, true);
-    builder->CreateRet(llvm::ConstantInt::get(*context, returnValue));
+    m_builder->CreateRet(llvm::ConstantInt::get(*m_context, returnValue));
     llvm::verifyFunction(*main);
 
     return VoidResult::Ok();
@@ -85,20 +85,20 @@ VoidResult AstVisitor::createProgram(const AST::ProgramExpression& expression) {
 
 void AstVisitor::configureTarget() {
     auto target = llvm::sys::getDefaultTargetTriple();
-    module->setTargetTriple(target);
+    m_module->setTargetTriple(target);
 }
 
 std::string AstVisitor::dumpCode() {
     std::string result;
     llvm::raw_string_ostream stream(result);
-    module->print(stream, nullptr);
+    m_module->print(stream, nullptr);
     return result;
 }
 
 Result<llvm::Value*> AstVisitor::visit(const AST::VariableIdentifier& expression) {
     std::cout << "Building variable identifier: " << expression.name << "\n";
 
-    llvm::Value* value = variables[expression.name];
+    llvm::Value* value = m_variables[expression.name];
     if (!value) {
         return Result<llvm::Value*>::Failure("Cannot find value for \'" + expression.name + '\'', nullptr);
     }
@@ -115,11 +115,11 @@ Result<llvm::Value*> AstVisitor::visit(const AST::VariableDeclarationExpression&
     // call it like expression.declaration->codeget(*this);
 
     // figure out how vars should be declared properly 
-    llvm::AllocaInst* var = builder->CreateAlloca(
-        llvm::Type::getInt32Ty(*context), nullptr, llvm::Twine(expression.identifier));
+    llvm::AllocaInst* var = m_builder->CreateAlloca(
+        llvm::Type::getInt32Ty(*m_context), nullptr, llvm::Twine(expression.identifier));
 
-    variables[expression.identifier] = var;
-    builder->CreateStore(value, var);
+    m_variables[expression.identifier] = var;
+    m_builder->CreateStore(value, var);
     return Result<llvm::Value*>::Ok(value);
 }
 
@@ -136,14 +136,14 @@ Result<llvm::Value*> AstVisitor::visit(const AST::AssignExpression& expression) 
         return id;
     }
 
-    builder->CreateStore(value.data, id.data);
+    m_builder->CreateStore(value.data, id.data);
     return Result<llvm::Value*>::Ok(value.data);
 }
 
 Result<llvm::Value*> AstVisitor::visit(const AST::Int32LiteralExpression& expression) {
     std::cout << "Building int32 literal expression: " << expression.value << "\n";
 
-    llvm::Value* value = llvm::ConstantInt::getSigned(llvm::Type::getInt32Ty(*context), expression.value);
+    llvm::Value* value = llvm::ConstantInt::getSigned(llvm::Type::getInt32Ty(*m_context), expression.value);
     return Result<llvm::Value*>::Ok(value);
 }
 
@@ -161,21 +161,21 @@ Result<llvm::Value*> AstVisitor::visit(const AST::BinaryExpression& expression) 
 
     llvm::Value* result;
 
-    llvm::Value* loadedLeft = builder->CreateLoad(llvm::Type::getInt32Ty(*context), left.data);
-    llvm::Value* loadedRight = builder->CreateLoad(llvm::Type::getInt32Ty(*context), right.data);
+    llvm::Value* loadedLeft = m_builder->CreateLoad(llvm::Type::getInt32Ty(*m_context), left.data);
+    llvm::Value* loadedRight = m_builder->CreateLoad(llvm::Type::getInt32Ty(*m_context), right.data);
 
     switch (expression.type) {
         case AST::BinaryExpressionType::Add:
-            result = builder->CreateAdd(loadedLeft, loadedRight, "add");
+            result = m_builder->CreateAdd(loadedLeft, loadedRight, "add");
             break;
         case AST::BinaryExpressionType::Subtract:
-            result = builder->CreateSub(loadedLeft, loadedRight, "sub");
+            result = m_builder->CreateSub(loadedLeft, loadedRight, "sub");
             break;
         case AST::BinaryExpressionType::Multiply:
-            result = builder->CreateMul(loadedLeft, loadedRight, "mul");
+            result = m_builder->CreateMul(loadedLeft, loadedRight, "mul");
             break;
         case AST::BinaryExpressionType::Divide:
-            result = builder->CreateSDiv(loadedLeft, loadedRight, "div");
+            result = m_builder->CreateSDiv(loadedLeft, loadedRight, "div");
             break;
     };
 

@@ -15,7 +15,7 @@ namespace AST {
     struct Identifier {
         std::string name;
 
-        Identifier(const std::string& name) : name(name) {};
+        Identifier(const std::string& t_name) : name(t_name) {};
         virtual ~Identifier() = default;
 
         virtual Result<llvm::Value*> generate(AstVisitor& visitor) = 0;
@@ -43,7 +43,7 @@ namespace AST {
         std::string identifier;
         std::string variableType;
 
-        VariableDeclarationExpression(const std::string& identifier, const std::string& variableType) : identifier(identifier), variableType(variableType) {};
+        VariableDeclarationExpression(const std::string& t_identifier, const std::string& t_variableType) : identifier(t_identifier), variableType(t_variableType) {};
 
         VariableDeclarationExpression(const VariableDeclarationExpression& value)
             : identifier(value.identifier), variableType(value.variableType) {};
@@ -68,9 +68,9 @@ namespace AST {
     struct Int32LiteralExpression : public Expression {
         int32_t value;
 
-        Int32LiteralExpression(int32_t value) : value(value) {};
-        Int32LiteralExpression(const Int32LiteralExpression& val) : value(val.value) {};
-        Int32LiteralExpression(Int32LiteralExpression&& val) : value(std::move(val.value)) {};
+        Int32LiteralExpression(int32_t t_value) : value(t_value) {};
+        Int32LiteralExpression(const Int32LiteralExpression& t_value) : value(t_value.value) {};
+        Int32LiteralExpression(Int32LiteralExpression&& t_value) : value(std::move(t_value.value)) {};
 
         virtual Result<llvm::Value*> generate(AstVisitor& visitor) override;
     };
@@ -87,8 +87,8 @@ namespace AST {
         std::unique_ptr<Identifier> left;
         std::unique_ptr<Identifier> right;
 
-        BinaryExpression(BinaryExpressionType type, Identifier* left, Identifier* right) : type(type), left(left), right(right) {};
-        BinaryExpression(BinaryExpression&& val) : left(std::move(val.left)), right(std::move(val.right)) {};
+        BinaryExpression(BinaryExpressionType t_type, Identifier* t_left, Identifier* t_right) : type(t_type), left(t_left), right(t_right) {};
+        BinaryExpression(BinaryExpression&& value) : left(std::move(value.left)), right(std::move(value.right)) {};
 
         virtual Result<llvm::Value*> generate(AstVisitor& visitor) override;
     };
