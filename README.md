@@ -1,5 +1,7 @@
 # microlang
 
+Trying to follow [this](https://github.com/cpp-best-practices/cppbestpractices/blob/master/03-Style.md) coding standart
+
 ### howto
 To compile compiler:
 1. Go to build directory
