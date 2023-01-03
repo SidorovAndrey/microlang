@@ -21,7 +21,7 @@ add_executable(main
     src/Utils.cpp
     src/AstVisitor.cpp)
 
-add_compile_options(-Wall)
+add_compile_options(-Wall -Wextra -Wshadow -Wconversion -Wpedantic -Werror)
 
 llvm_map_components_to_libnames(llvm_libs support core irreader)
 
