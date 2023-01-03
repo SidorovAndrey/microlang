@@ -14,6 +14,7 @@ To compile source code from test/text.txt, in build directory:
 
 ### TODO
 - [ ] Refactor building AST function in `AST::buildTree`
+- [ ] Write unit tests
 - [ ] Implement all the binary and unary operations
 - [ ] Create logging approach
 - [ ] Create error reporting approach
