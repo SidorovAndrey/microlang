@@ -128,12 +128,12 @@ Result<llvm::Value*> AstVisitor::visit(const AST::AssignExpression& expression) 
 
     Result<llvm::Value*> value = expression.assignExpression->generate(*this);
     if (!value.isSuccess) {
-        return std::move(value);
+        return value;
     }
 
     Result<llvm::Value*> id = expression.identifier->generate(*this);
     if (!id.isSuccess) {
-        return std::move(id);
+        return id;
     }
 
     builder->CreateStore(value.data, id.data);
@@ -151,12 +151,12 @@ Result<llvm::Value*> AstVisitor::visit(const AST::BinaryExpression& expression) 
     std::cout << "Building binary expression: " << expression.left->name << " + " << expression.right->name << "\n";
     Result<llvm::Value*> left = expression.left->generate(*this);
     if (!left.isSuccess) {
-        return std::move(left);
+        return left;
     }
 
     Result<llvm::Value*> right = expression.right->generate(*this);
     if (!right.isSuccess) {
-        return std::move(right);
+        return right;
     }
 
     llvm::Value* result;
