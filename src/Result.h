@@ -12,14 +12,14 @@ public:
     bool isSuccess;
     std::string errorMessage;
 
-        VoidResult(const VoidResult&) = delete;
+    VoidResult(const VoidResult&) = delete;
 
     VoidResult(VoidResult&& item) 
         : isSuccess(item.isSuccess), errorMessage(item.errorMessage)
     {};
 
-    static VoidResult Ok() { return VoidResult(true, ""); };
-    static VoidResult Failure(std::string errorMessage) { return VoidResult(false, errorMessage); };
+    [[nodiscard]] static VoidResult Ok() { return VoidResult(true, ""); };
+    [[nodiscard]] static VoidResult Failure(std::string errorMessage) { return VoidResult(false, errorMessage); };
 };
 
 template <typename T = char>
@@ -43,9 +43,9 @@ public:
     {};
 
     // TODO: move to Result.cpp
-    static Result<T> Ok(const T& value) { return Result<T>(true, "", value); }
-    static Result<T> Ok(T&& value) { return Result<T>(true, "", std::move(value)); }
-    static Result<T> Failure(std::string errorMessage, const T& value) { return Result<T>(false, errorMessage, value); }
-    static Result<T> Failure(std::string errorMessage, T&& value) { return Result<T>(false, errorMessage, std::move(value)); }
+    [[nodiscard]] static Result<T> Ok(const T& value) { return Result<T>(true, "", value); }
+    [[nodiscard]] static Result<T> Ok(T&& value) { return Result<T>(true, "", std::move(value)); }
+    [[nodiscard]] static Result<T> Failure(std::string errorMessage, const T& value) { return Result<T>(false, errorMessage, value); }
+    [[nodiscard]] static Result<T> Failure(std::string errorMessage, T&& value) { return Result<T>(false, errorMessage, std::move(value)); }
 };
 

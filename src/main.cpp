@@ -9,7 +9,7 @@
 #include "AST.h"
 #include "AstVisitor.h"
 
-std::string getTokenTypeName(const Lexer::TokenType type) {
+[[nodiscard]] std::string getTokenTypeName(const Lexer::TokenType type) {
     switch(type) {
         case Lexer::TokenType::IDENTIFIER:
             return "IDENTIFIER";
@@ -34,7 +34,7 @@ std::string getTokenTypeName(const Lexer::TokenType type) {
     }
 }
 
-int main(int argc, char** argv) {
+[[nodiscard]] int main(int argc, char** argv) {
     if (argc < 2) {
         fprintf(stderr, "ERROR: Source file not specified\n");
     }
@@ -58,7 +58,11 @@ int main(int argc, char** argv) {
     Result<AST::ProgramExpression> treeResult = AST::buildTree(lexerResult.data);
 
     AstVisitor visitor;
-    visitor.createProgram(treeResult.data);
+    VoidResult programResult = visitor.createProgram(treeResult.data);
+    if (!programResult.isSuccess) {
+        fprintf(stderr, "%s\n", programResult.errorMessage.c_str());
+        return -1;
+    }
     visitor.configureTarget();
     std::string result = visitor.dumpCode();
     printf("%s\n", result.c_str());
