@@ -18,7 +18,7 @@ namespace AST {
         Identifier(const std::string& t_name) : name(t_name) {};
         virtual ~Identifier() = default;
 
-        virtual Result<llvm::Value*> generate(AstVisitor& visitor) = 0;
+        [[nodiscard]] virtual Result<llvm::Value*> generate(AstVisitor& visitor) = 0;
     };
 
     struct VariableIdentifier : public Identifier {
@@ -29,7 +29,7 @@ namespace AST {
 
     struct Expression {
         virtual ~Expression() = default;
-        virtual Result<llvm::Value*> generate(AstVisitor& visitor) = 0;
+        [[nodiscard]] virtual Result<llvm::Value*> generate(AstVisitor& visitor) = 0;
     };
 
     struct ProgramExpression {
@@ -51,7 +51,7 @@ namespace AST {
         VariableDeclarationExpression(VariableDeclarationExpression&& value)
             : identifier(std::move(value.identifier)), variableType(std::move(value.variableType)) {};
 
-        virtual Result<llvm::Value*> generate(AstVisitor& visitor) override;
+        [[nodiscard]] virtual Result<llvm::Value*> generate(AstVisitor& visitor) override;
     };
 
     struct AssignExpression : public Expression {
@@ -62,7 +62,7 @@ namespace AST {
 
         AssignExpression(AssignExpression&& value) : identifier(std::move(value.identifier)), assignExpression(std::move(value.assignExpression)) {};
 
-        virtual Result<llvm::Value*> generate(AstVisitor& visitor) override;
+        [[nodiscard]] virtual Result<llvm::Value*> generate(AstVisitor& visitor) override;
     };
 
     struct Int32LiteralExpression : public Expression {
@@ -72,7 +72,7 @@ namespace AST {
         Int32LiteralExpression(const Int32LiteralExpression& t_value) : value(t_value.value) {};
         Int32LiteralExpression(Int32LiteralExpression&& t_value) : value(std::move(t_value.value)) {};
 
-        virtual Result<llvm::Value*> generate(AstVisitor& visitor) override;
+        [[nodiscard]] virtual Result<llvm::Value*> generate(AstVisitor& visitor) override;
     };
 
     enum class BinaryExpressionType {
@@ -90,9 +90,9 @@ namespace AST {
         BinaryExpression(BinaryExpressionType t_type, Identifier* t_left, Identifier* t_right) : type(t_type), left(t_left), right(t_right) {};
         BinaryExpression(BinaryExpression&& value) : left(std::move(value.left)), right(std::move(value.right)) {};
 
-        virtual Result<llvm::Value*> generate(AstVisitor& visitor) override;
+        [[nodiscard]] virtual Result<llvm::Value*> generate(AstVisitor& visitor) override;
     };
 
-    Result<ProgramExpression> buildTree(const std::vector<Lexer::Token>& tokens);
+    [[nodiscard]] Result<ProgramExpression> buildTree(const std::vector<Lexer::Token>& tokens);
 };
 

@@ -27,5 +27,5 @@ namespace Lexer {
         std::string symbol;
     };
 
-    Result<std::vector<Token>> parse(const std::string& text);
+    [[nodiscard]] Result<std::vector<Token>> parse(const std::string& text);
 }
