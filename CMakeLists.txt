@@ -19,7 +19,8 @@ add_executable(main
     src/AST.cpp
     src/Lexer.cpp
     src/Utils.cpp
-    src/AstVisitor.cpp)
+    src/AstVisitor.cpp
+    src/Log.cpp)
 
 add_compile_options(-Wall -Wextra -Wshadow -Wconversion -Wpedantic -Werror)
 

@@ -1,12 +1,11 @@
 #include "AstVisitor.h"
 
-#include <iostream>
-
 #include <llvm/IR/Constant.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/Verifier.h>
 #include <llvm/Support/Host.h>
 
+#include "Log.h"
 
 AstVisitor::AstVisitor() noexcept {
     m_context = std::make_unique<llvm::LLVMContext>();
@@ -48,7 +47,7 @@ void addOutputTextForValue(llvm::LLVMContext& context, llvm::IRBuilder<>& builde
 }
 
 VoidResult AstVisitor::createProgram(const AST::ProgramExpression& expression) {
-    std::cout << "Building program expression." << "\n";
+    Log::write(Log::DEBUG, "Building program expression");
 
     llvm::FunctionType* mainType = llvm::FunctionType::get(
         llvm::IntegerType::getInt32Ty(*m_context),
@@ -65,8 +64,7 @@ VoidResult AstVisitor::createProgram(const AST::ProgramExpression& expression) {
     for (auto& ex : expression.expressions) {
         auto res = ex->generate(*this);
         if (!res.isSuccess) {
-            std::cout << "COMPILATION ERROR: " << res.errorMessage << "\n";
-            break;
+            return VoidResult::Failure("COMPILATION ERROR: " + res.errorMessage);
         }
     }
 
@@ -96,7 +94,7 @@ std::string AstVisitor::dumpCode() {
 }
 
 Result<llvm::Value*> AstVisitor::visit(const AST::VariableIdentifier& expression) {
-    std::cout << "Building variable identifier: " << expression.name << "\n";
+    Log::write(Log::DEBUG, "Building variable identifier: " + expression.name);
 
     llvm::Value* value = m_variables[expression.name];
     if (!value) {
@@ -107,9 +105,9 @@ Result<llvm::Value*> AstVisitor::visit(const AST::VariableIdentifier& expression
 }
 
 Result<llvm::Value*> AstVisitor::visit(const AST::VariableDeclarationExpression& expression) {
-    std::cout << "Building variable declaration expression: \'" << expression.identifier << "\' of type \'" << expression.variableType << "\'\n";
+    Log::write(Log::DEBUG, "Building variable declaration expression: \'" + expression.identifier + "\' of type \'" + expression.variableType);
 
-    llvm::Value* value = llvm::ConstantInt::getSigned(llvm::Type::getInt32Ty(*context), 0);
+    llvm::Value* value = llvm::ConstantInt::getSigned(llvm::Type::getInt32Ty(*m_context), 0);
 
     // TODO: declaration expression must contain declaration of var with concrete type, like Int32VarDeclarationExpression
     // call it like expression.declaration->codeget(*this);
@@ -124,7 +122,7 @@ Result<llvm::Value*> AstVisitor::visit(const AST::VariableDeclarationExpression&
 }
 
 Result<llvm::Value*> AstVisitor::visit(const AST::AssignExpression& expression) {
-    std::cout << "Building assign expression: \'" << expression.identifier->name << "\'\n";
+    Log::write(Log::DEBUG, "Building assign expression: \'" + expression.identifier->name + "\'");
 
     Result<llvm::Value*> value = expression.assignExpression->generate(*this);
     if (!value.isSuccess) {
@@ -141,14 +139,14 @@ Result<llvm::Value*> AstVisitor::visit(const AST::AssignExpression& expression) 
 }
 
 Result<llvm::Value*> AstVisitor::visit(const AST::Int32LiteralExpression& expression) {
-    std::cout << "Building int32 literal expression: " << expression.value << "\n";
+    Log::write(Log::DEBUG, "Building int32 literal expression: " + std::to_string(expression.value));
 
     llvm::Value* value = llvm::ConstantInt::getSigned(llvm::Type::getInt32Ty(*m_context), expression.value);
     return Result<llvm::Value*>::Ok(value);
 }
 
 Result<llvm::Value*> AstVisitor::visit(const AST::BinaryExpression& expression) {
-    std::cout << "Building binary expression: " << expression.left->name << " + " << expression.right->name << "\n";
+    Log::write(Log::DEBUG, "Building binary expression: " + expression.left->name + " + " + expression.right->name);
     Result<llvm::Value*> left = expression.left->generate(*this);
     if (!left.isSuccess) {
         return left;

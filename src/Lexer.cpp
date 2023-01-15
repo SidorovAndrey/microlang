@@ -3,6 +3,8 @@
 #include <cctype>
 #include <string>
 
+#include "Log.h"
+
 namespace Lexer {
     void skipIgnoredSymbols(const std::string& text, uint32_t& i) {
         while (i < text.size() && (text[i] == ' ' || text[i] == '\t')) {
@@ -111,6 +113,7 @@ namespace Lexer {
     }
 
     Result<std::vector<Token>> parse(const std::string& text) {
+        Log::write(Log::DEBUG, "Starting source code parse");
         std::vector<Token> tokens;
 
         uint32_t i = 0;
@@ -133,6 +136,7 @@ namespace Lexer {
             ++row;
         }
 
+        Log::write(Log::DEBUG, "Source code parse succeeded");
         return Result<std::vector<Token>>::Ok(tokens);
     }
 }

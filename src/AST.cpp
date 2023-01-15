@@ -5,6 +5,8 @@
 #include "AstVisitor.h"
 #include "Utils.h"
 
+#include "Log.h"
+
 namespace AST {
     Result<llvm::Value*> VariableIdentifier::generate(AstVisitor& visitor) {
         return visitor.visit(*this);
@@ -27,6 +29,7 @@ namespace AST {
     }
 
     Result<ProgramExpression> buildTree(const std::vector<Lexer::Token> &tokens) {
+        Log::write(Log::DEBUG, "Starting building program tree");
         ProgramExpression program;
 
         int i = 1;
@@ -84,6 +87,7 @@ namespace AST {
             ++i;
         }
 
+        Log::write(Log::DEBUG, "Building program tree succeeded");
         return Result<ProgramExpression>::Ok(std::move(program));
     };
 }
