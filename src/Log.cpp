@@ -1,13 +1,17 @@
 #include "Log.h"
 
 namespace Log {
-    static std::unique_ptr<Logger> logger;
+    static std::unique_ptr<LoggerBase> globalLogger;
 
-    void initGlobal(std::ostream* stream) {
-        logger = std::make_unique<Logger>(stream);
+    void initGlobal(std::unique_ptr<LoggerBase> logger) {
+        globalLogger = std::move(logger);
     };
 
     void write(Level level, std::string_view message) {
-        logger->write(level, message);
+        globalLogger->write(level, message);
+    }
+
+    void ConsoleLogger::write(Level level, std::string_view message) {
+        std::cout << "[" << levels[level] << "]: " << message << "\n";
     }
 };

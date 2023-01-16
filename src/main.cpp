@@ -47,7 +47,7 @@ void logLexerToken(const std::vector<Lexer::Token>& tokens) {
 }
 
 [[nodiscard]] int main(int argc, char** argv) {
-    Log::initGlobal(&std::cout); // TODO: not sure about how to pass std::cout here
+    Log::initGlobal(std::make_unique<Log::ConsoleLogger>());
 
     if (argc < 2) {
         Log::write(Log::ERROR, "Source file not specified");
