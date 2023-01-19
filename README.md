@@ -18,7 +18,7 @@ To compile source code from test/text.txt, in build directory:
 - [ ] Refactor building AST function in `AST::buildTree`
 - [ ] Write unit tests. Check doctest/Catch2/gtest (from google)/boosttest
 - [ ] Implement all the binary and unary operations
-- [ ] Create logging approach
+- [x] Create logging approach
 - [ ] Create error reporting approach
 - [ ] Update project structure, separate front-end and backend; introduce utils module (with logging and Result); use different files for each Expression type in different folder
 - [ ] Implement "if"

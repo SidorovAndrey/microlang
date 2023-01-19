@@ -37,7 +37,6 @@
 
 void logLexerToken(const std::vector<Lexer::Token>& tokens) {
     for (const auto& token : tokens) {
-        // TODO: find better way for such formatting
         std::string formatted = "id: " + std::to_string(token.id);
         formatted += "\t type: " + getTokenTypeName(token.type);
         formatted += "\t at: [" + std::to_string(token.row) + ";" + std::to_string(token.column) + "]";
