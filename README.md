@@ -1,8 +1,8 @@
 # microlang
 
-Trying to follow [this](https://github.com/cpp-best-practices/cppbestpractices/blob/master/03-Style.md) coding standart
+Trying to follow [this](https://github.com/cpp-best-practices/cppbestpractices/blob/master/03-Style.md) coding standard
 
-### howto
+### HOWTO
 To compile compiler:
 1. Go to build directory
 2. Run `cmake ..`
@@ -15,14 +15,18 @@ To compile source code from test/text.txt, in build directory:
 4. Now you can run compiled program `./build/output.ll.out`
 
 ### TODO
-- [ ] Refactor building AST function in `AST::buildTree`
-- [ ] "front" should not depend on LLVM
-- [ ] Write unit tests. Check doctest/Catch2/gtest (from google)/boosttest
+#### Features
 - [ ] Implement all the binary and unary operations
-- [x] Create logging approach
-- [ ] Create error reporting approach
-- [x] Update project structure, separate front-end and backend; introduce utils module (with logging and Result); use different files for each Expression type in different folder
-- [ ] Update to use prefixes for modules in `#include`, e.g. `#include "front/AST.h"` instead of `#include "AST.h"`
 - [ ] Implement "if"
 - [ ] Implement "while"
 - [ ] Implement functions
+
+#### Tech debt
+- [ ] Refactor building AST function in `AST::buildTree`
+- [ ] "front" should not depend on LLVM
+- [ ] Write unit tests. Check doctest/Catch2/gtest (from google)/boosttest
+- [x] Create logging approach
+- [ ] Create error reporting approach, on which line wich error happened and so on
+- [x] Update project structure, separate front-end and backend; introduce utils module (with logging and Result); use different files for each Expression type in different folder
+- [ ] Update to use prefixes for modules in `#include`, e.g. `#include "front/AST.h"` instead of `#include "AST.h"`
+
