@@ -28,5 +28,5 @@ To compile source code from test/text.txt, in build directory:
 - [x] Create logging approach
 - [ ] Create error reporting approach, on which line wich error happened and so on
 - [x] Update project structure, separate front-end and backend; introduce utils module (with logging and Result); use different files for each Expression type in different folder
-- [ ] Update to use prefixes for modules in `#include`, e.g. `#include "front/AST.h"` instead of `#include "AST.h"`
+- [x] Update to use prefixes for modules in `#include`, e.g. `#include "front/AST.h"` instead of `#include "AST.h"`
 
