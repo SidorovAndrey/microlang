@@ -6,13 +6,6 @@ add_library(${PROJECT_NAME}
 
 add_library(back_lib ALIAS ${PROJECT_NAME})
 
-#target_sources(${PROJECT_NAME}
-#    PRIVATE
-#        AstVisitor.cpp
-#    PUBLIC
-#        ${CMAKE_CURRENT_LIST_DIR}/AstVisitor.h
-#)
-
 find_package(LLVM REQUIRED CONFIG)
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")

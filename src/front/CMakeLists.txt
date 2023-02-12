@@ -6,15 +6,6 @@ add_library(${PROJECT_NAME}
 )
 add_library(front_lib ALIAS ${PROJECT_NAME})
 
-#target_sources(front
-#    PRIVATE
-#        AST.cpp
-#        Lexer.cpp
-#    PUBLIC
-#        ${CMAKE_CURRENT_LIST_DIR}/AST.h
-#        ${CMAKE_CURRENT_LIST_DIR}/Lexer.h
-#)
-
 find_package(LLVM REQUIRED CONFIG)
 
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
