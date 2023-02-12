@@ -1,11 +1,11 @@
-#include "AstVisitor.h"
+#include "back/AstVisitor.h"
 
 #include <llvm/IR/Constant.h>
 #include <llvm/IR/Function.h>
 #include <llvm/IR/Verifier.h>
 #include <llvm/Support/Host.h>
 
-#include "Log.h"
+#include "common/Log.h"
 
 AstVisitor::AstVisitor() noexcept {
     m_context = std::make_unique<llvm::LLVMContext>();

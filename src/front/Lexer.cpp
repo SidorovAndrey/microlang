@@ -1,9 +1,9 @@
-#include "Lexer.h"
+#include "front/Lexer.h"
 
 #include <cctype>
 #include <string>
 
-#include "Log.h"
+#include "common/Log.h"
 
 namespace Lexer {
     void skipIgnoredSymbols(const std::string& text, uint32_t& i) {

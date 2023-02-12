@@ -7,7 +7,7 @@
 
 #include <llvm/IR/Value.h>
 
-#include "Result.h"
+#include "common/Result.h"
 
 class AstVisitor;
 

@@ -1,11 +1,17 @@
-add_library(back "")
+project(back)
 
-target_sources(back
-    PRIVATE
-        AstVisitor.cpp
-    PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}/AstVisitor.h
+add_library(${PROJECT_NAME}
+    AstVisitor.cpp
 )
+
+add_library(back_lib ALIAS ${PROJECT_NAME})
+
+#target_sources(${PROJECT_NAME}
+#    PRIVATE
+#        AstVisitor.cpp
+#    PUBLIC
+#        ${CMAKE_CURRENT_LIST_DIR}/AstVisitor.h
+#)
 
 find_package(LLVM REQUIRED CONFIG)
 
@@ -17,12 +23,9 @@ add_definitions(${LLVM_DEFINITIONS})
 
 llvm_map_components_to_libnames(llvm_libs support core irreader)
 
-target_link_libraries(back PRIVATE common front PUBLIC ${llvm_libs})
+target_link_libraries(${PROJECT_NAME} common front ${llvm_libs})
 
-target_include_directories(back
-    PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/common
-        ${CMAKE_CURRENT_SOURCE_DIR}/src/front
+target_include_directories(${PROJECT_NAME}
+    PUBLIC ${PROJECT_SOURCE_DIR}/include
 )
 

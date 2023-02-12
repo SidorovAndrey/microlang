@@ -1,17 +1,12 @@
-add_library(common "")
+project(common)
 
-target_sources(common
-    PRIVATE
-        Log.cpp
-        Utils.cpp
-    PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}/Log.h
-        ${CMAKE_CURRENT_LIST_DIR}/Utils.h
-        ${CMAKE_CURRENT_LIST_DIR}/Result.h
+add_library(${PROJECT_NAME} 
+    Log.cpp
+    Utils.cpp
 )
+add_library(common_lib ALIAS ${PROJECT_NAME})
 
-target_include_directories(common
-    PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}
+target_include_directories(${PROJECT_NAME}
+    PUBLIC ${CMAKE_CURRENT_LIST_DIR}/include
 )
 

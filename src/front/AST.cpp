@@ -1,11 +1,10 @@
-#include "AST.h"
+#include "front/AST.h"
 
 #include <string>
 
-#include "AstVisitor.h"
-#include "Utils.h"
-
-#include "Log.h"
+#include "back/AstVisitor.h"
+#include "common/Utils.h"
+#include "common/Log.h"
 
 namespace AST {
     Result<llvm::Value*> VariableIdentifier::generate(AstVisitor& visitor) {

@@ -1,4 +1,4 @@
-#include "Log.h"
+#include "common/Log.h"
 
 namespace Log {
     static std::unique_ptr<LoggerBase> globalLogger;

@@ -5,8 +5,8 @@
 #include <llvm/IR/Value.h>
 #include <llvm/IR/IRBuilder.h>
 
-#include "AST.h"
-#include "Result.h"
+#include "front/AST.h"
+#include "common/Result.h"
 
 class AstVisitor {
 private:

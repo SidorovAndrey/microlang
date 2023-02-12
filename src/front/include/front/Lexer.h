@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 
-#include "Result.h"
+#include "common/Result.h"
 
 namespace Lexer {
     enum class TokenType {

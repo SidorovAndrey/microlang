@@ -4,11 +4,11 @@
 #include <string>
 #include <vector>
 
-#include "Result.h"
-#include "Lexer.h"
-#include "AST.h"
-#include "AstVisitor.h"
-#include "Log.h"
+#include "common/Result.h"
+#include "front/Lexer.h"
+#include "front/AST.h"
+#include "back/AstVisitor.h"
+#include "common/Log.h"
 
 [[nodiscard]] std::string getTokenTypeName(const Lexer::TokenType type) {
     switch(type) {
