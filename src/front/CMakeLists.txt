@@ -3,6 +3,7 @@ project(front)
 add_library(${PROJECT_NAME}
     AST.cpp
     Lexer.cpp
+    AstBuilder.cpp
 )
 add_library(front_lib ALIAS ${PROJECT_NAME})
 

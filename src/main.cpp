@@ -5,10 +5,11 @@
 #include <vector>
 
 #include "common/Result.h"
+#include "common/Log.h"
 #include "front/Lexer.h"
 #include "front/AST.h"
+#include "front/AstBuilder.h"
 #include "back/AstVisitor.h"
-#include "common/Log.h"
 
 [[nodiscard]] std::string getTokenTypeName(const Lexer::TokenType type) {
     switch(type) {
@@ -74,7 +75,11 @@ void logLexerToken(const std::vector<Lexer::Token>& tokens) {
         //}
     }
 
-    Result<AST::ProgramExpression> treeResult = AST::buildTree(lexerResult.data);
+    Result<AST::ProgramExpression> treeResult = AstBuilder::buildTree(lexerResult.data);
+    if (!treeResult.isSuccess) {
+        Log::write(Log::INFO, treeResult.errorMessage);
+        return -1;
+    }
 
     AstVisitor visitor;
     VoidResult programResult = visitor.createProgram(treeResult.data);

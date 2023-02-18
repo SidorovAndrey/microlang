@@ -92,7 +92,5 @@ namespace AST {
 
         [[nodiscard]] virtual Result<llvm::Value*> generate(AstVisitor& visitor) override;
     };
-
-    [[nodiscard]] Result<ProgramExpression> buildTree(const std::vector<Lexer::Token>& tokens);
 };
 
