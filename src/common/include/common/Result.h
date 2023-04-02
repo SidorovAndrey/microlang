@@ -37,6 +37,7 @@ public:
     T data;
 
     Result(const Result<T>&) = delete;
+    Result<T>& operator=(const Result<T>&) = delete;
 
     Result(Result<T>&& item) 
         : VoidResult(item.isSuccess, item.errorMessage), data(item.data)

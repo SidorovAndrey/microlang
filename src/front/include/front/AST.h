@@ -56,7 +56,7 @@ namespace AST {
 
     struct AssignExpression : public Expression {
         std::unique_ptr<Identifier> identifier;
-        std::unique_ptr<Expression> assignExpression;
+        std::unique_ptr<Expression> assignExpression; // TODO: must be impossible to assign some kind of expressions (rvalue?)
 
         AssignExpression(Identifier* id, Expression* expression) : identifier(id), assignExpression(expression) {};
 

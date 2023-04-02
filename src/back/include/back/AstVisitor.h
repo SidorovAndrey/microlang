@@ -18,16 +18,17 @@ private:
 
 public:
     AstVisitor() noexcept;
+    virtual ~AstVisitor() = default;
 
-    [[nodiscard]] VoidResult createProgram(const AST::ProgramExpression& expression);
-    void configureTarget();
-    [[nodiscard]] std::string dumpCode();
+    [[nodiscard]] virtual VoidResult createProgram(const AST::ProgramExpression& expression);
+    virtual void configureTarget();
+    [[nodiscard]] virtual std::string dumpCode();
 
-    [[nodiscard]] Result<llvm::Value*> visit(const AST::VariableIdentifier& expression);
+    [[nodiscard]] virtual Result<llvm::Value*> visit(const AST::VariableIdentifier& expression);
 
-    [[nodiscard]] Result<llvm::Value*> visit(const AST::VariableDeclarationExpression& expression);
-    [[nodiscard]] Result<llvm::Value*> visit(const AST::AssignExpression& expression);
-    [[nodiscard]] Result<llvm::Value*> visit(const AST::Int32LiteralExpression& expression);
-    [[nodiscard]] Result<llvm::Value*> visit(const AST::BinaryExpression& expression);
+    [[nodiscard]] virtual Result<llvm::Value*> visit(const AST::VariableDeclarationExpression& expression);
+    [[nodiscard]] virtual Result<llvm::Value*> visit(const AST::AssignExpression& expression);
+    [[nodiscard]] virtual Result<llvm::Value*> visit(const AST::Int32LiteralExpression& expression);
+    [[nodiscard]] virtual Result<llvm::Value*> visit(const AST::BinaryExpression& expression);
 };
 

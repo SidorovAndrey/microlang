@@ -7,6 +7,7 @@ set(CMAKE_OSX_SYSROOT /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_subdirectory(src)
+add_subdirectory(test)
 
 add_compile_options(-Wall -Wextra -Wshadow -Wconversion -Wpedantic -Werror)
 
