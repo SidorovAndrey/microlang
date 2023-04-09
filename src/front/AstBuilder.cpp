@@ -33,21 +33,21 @@ Result<std::unique_ptr<AST::Expression>> processAssign(int& idx, const std::vect
         AST::VariableIdentifier* left = new AST::VariableIdentifier(tokens[idx - 1].symbol);
         AST::VariableIdentifier* right = new AST::VariableIdentifier(tokens[idx + 1].symbol);
 
-        std::unique_ptr<AST::Expression> binaryExpression;
+        AST::Expression* binaryExpression;
         if (tokens[idx].type == Lexer::TokenType::PLUS) {
-            binaryExpression = std::make_unique<AST::BinaryExpression>(AST::BinaryExpressionType::Add, left, right);
+            binaryExpression = new AST::BinaryExpression(AST::BinaryExpressionType::Add, left, right);
         } else if (tokens[idx].type == Lexer::TokenType::MINUS) {
-            binaryExpression = std::make_unique<AST::BinaryExpression>(AST::BinaryExpressionType::Subtract, left, right);
+            binaryExpression = new AST::BinaryExpression(AST::BinaryExpressionType::Subtract, left, right);
         } else if (tokens[idx].type == Lexer::TokenType::MULTIPLY) {
-            binaryExpression = std::make_unique<AST::BinaryExpression>(AST::BinaryExpressionType::Multiply, left, right);
+            binaryExpression = new AST::BinaryExpression(AST::BinaryExpressionType::Multiply, left, right);
         } else if (tokens[idx].type == Lexer::TokenType::DIVIDE) {
-            binaryExpression = std::make_unique<AST::BinaryExpression>(AST::BinaryExpressionType::Divide, left, right);
+            binaryExpression = new AST::BinaryExpression(AST::BinaryExpressionType::Divide, left, right);
         } else {
-            return Result<std::unique_ptr<AST::Expression>>::Failure("Not defined binary operation \'" + tokens[idx].symbol + "\'", std::move(binaryExpression));
+            return Result<std::unique_ptr<AST::Expression>>::Failure("Not defined binary operation \'" + tokens[idx].symbol + "\'", nullptr);
         }
 
         ++idx;
-        result = std::make_unique<AST::AssignExpression>(identifier, binaryExpression.get());
+        result = std::make_unique<AST::AssignExpression>(identifier, binaryExpression);
     }
 
     ++idx;
@@ -59,15 +59,20 @@ Result<std::unique_ptr<AST::Expression>> processAssign(int& idx, const std::vect
 }
 
 Result<std::unique_ptr<AST::Expression>> processNext(int& idx, const std::vector<Lexer::Token>& tokens) {
+    while (tokens[idx].type != Lexer::TokenType::DECLARE_TYPE && tokens[idx].type != Lexer::TokenType::ASSIGN) {
+        ++idx;
+        if (idx >= tokens.size()) {
+            return Result<std::unique_ptr<AST::Expression>>::Ok(nullptr);
+        }
+    }
+    Log::write(Log::DEBUG, "Processing token with id = " + std::to_string(tokens[idx].id));
     if (tokens[idx].type == Lexer::TokenType::DECLARE_TYPE) {
         return processDeclaration(idx, tokens);
-    }
-
-    if (tokens[idx].type == Lexer::TokenType::ASSIGN) {
+    } else if (tokens[idx].type == Lexer::TokenType::ASSIGN) {
         return processAssign(idx, tokens);
     }
 
-    return Result<std::unique_ptr<AST::Expression>>::Failure("Unknown expression", nullptr);
+    return Result<std::unique_ptr<AST::Expression>>::Failure("Unknown expression, token id = " + std::to_string(tokens[idx].id), nullptr);
 }
 
 Result<AST::ProgramExpression> AstBuilder::buildTree(const std::vector<Lexer::Token>& tokens) {
@@ -81,7 +86,9 @@ Result<AST::ProgramExpression> AstBuilder::buildTree(const std::vector<Lexer::To
             return Result<AST::ProgramExpression>::Failure(result.errorMessage, std::move(program));
         }
 
-        program.expressions.push_back(std::move(result.data));
+        if (result.data != nullptr) {
+            program.expressions.push_back(std::move(result.data));
+        }
     }
 
     Log::write(Log::DEBUG, "Building program tree succeeded");

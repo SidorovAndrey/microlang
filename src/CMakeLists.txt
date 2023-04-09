@@ -1,3 +1,5 @@
+project(main)
+
 add_executable(main main.cpp)
 
 add_subdirectory(common)
@@ -10,3 +12,4 @@ target_link_libraries(main
         front
         back
 )
+

@@ -77,7 +77,7 @@ void logLexerToken(const std::vector<Lexer::Token>& tokens) {
 
     Result<AST::ProgramExpression> treeResult = AstBuilder::buildTree(lexerResult.data);
     if (!treeResult.isSuccess) {
-        Log::write(Log::INFO, treeResult.errorMessage);
+        Log::write(Log::ERROR, treeResult.errorMessage);
         return -1;
     }
 

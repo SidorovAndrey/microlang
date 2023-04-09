@@ -61,6 +61,7 @@ VoidResult AstVisitor::createProgram(const AST::ProgramExpression& expression) {
 
     m_variables.clear();
 
+    Log::write(Log::DEBUG, "EXPRESSIONS COUNT: " + std::to_string(expression.expressions.size()));
     for (auto& ex : expression.expressions) {
         auto res = ex->generate(*this);
         if (!res.isSuccess) {
@@ -72,7 +73,7 @@ VoidResult AstVisitor::createProgram(const AST::ProgramExpression& expression) {
     //addOutputTextForValue(*context, *builder, *module, "myVar3 = %d\n", builder->CreateLoad(llvm::Type::getInt32Ty(*context), variables["myVar3"]));
     //addOutputTextForValue(*context, *builder, *module, "myVar4 = %d\n", builder->CreateLoad(llvm::Type::getInt32Ty(*context), variables["myVar4"]));
     //addOutputTextForValue(*context, *builder, *module, "myVar5 = %d\n", builder->CreateLoad(llvm::Type::getInt32Ty(*context), variables["myVar5"]));
-    addOutputTextForValue(*m_context, *m_builder, *m_module, "myVar6 = %d\n", m_builder->CreateLoad(llvm::Type::getInt32Ty(*m_context), m_variables["myVar6"]));
+    //addOutputTextForValue(*m_context, *m_builder, *m_module, "myVar6 = %d\n", m_builder->CreateLoad(llvm::Type::getInt32Ty(*m_context), m_variables["myVar6"]));
 
     llvm::APInt returnValue(32, (uint32_t)0, true);
     m_builder->CreateRet(llvm::ConstantInt::get(*m_context, returnValue));
