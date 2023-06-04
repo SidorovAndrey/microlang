@@ -16,6 +16,7 @@ To compile source code from test/text.txt, in build directory:
 
 ### TODO
 #### Features
+- [ ] Use 'let' keyword for declaring vars
 - [ ] Implement all the binary and unary operations
 - [ ] Implement "if"
 - [ ] Implement "while"
