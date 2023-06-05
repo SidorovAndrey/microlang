@@ -26,7 +26,7 @@ namespace Lexer {
         } else if (symbol == '/') {
             return TokenType::DIVIDE;
         } else if (symbol == ':') {
-            return TokenType::DECLARE_TYPE;
+            return TokenType::COLON;
         }
 
         errorMessage = "unkown token at [" + std::to_string(row) + ":" + std::to_string(col) + "]";
@@ -59,9 +59,13 @@ namespace Lexer {
                     ++col;
                 }
 
+                TokenType tokenType = name == "let" 
+                    ? TokenType::DECLARE_VAR 
+                    : TokenType::IDENTIFIER;
+
                 Token token {
                     .id = id++,
-                    .type = TokenType::IDENTIFIER,
+                    .type = tokenType,
                     .row = row,
                     .column = colStart + 1,
                     .symbol = name
@@ -110,6 +114,33 @@ namespace Lexer {
         }
 
         return "";
+    }
+
+    std::string getTokenTypeName(const Lexer::TokenType type) {
+        switch(type) {
+            case Lexer::TokenType::IDENTIFIER:
+                return "IDENTIFIER";
+            case Lexer::TokenType::INT:
+                return "INT";
+            case Lexer::TokenType::ASSIGN:
+                return "ASSIGN";
+            case Lexer::TokenType::ENDLINE:
+                return "ENDLINE";
+            case Lexer::TokenType::PLUS:
+                return "PLUS";
+            case Lexer::TokenType::MINUS:
+                return "MINUS";
+            case Lexer::TokenType::MULTIPLY:
+                return "MULTIPLY";
+            case Lexer::TokenType::DIVIDE:
+                return "DIVIDE";
+            case Lexer::TokenType::COLON:
+                return "TYPE";
+            case Lexer::TokenType::DECLARE_VAR:
+                return "DECLARE_VAR";
+            default:
+                return "UNKNOWN";
+        }
     }
 
     Result<std::vector<Token>> parse(const std::string& text) {

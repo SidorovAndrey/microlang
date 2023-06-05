@@ -15,10 +15,14 @@ namespace Lexer {
         MINUS,
         MULTIPLY,
         DIVIDE,
-        DECLARE_TYPE,
+        DECLARE_VAR,
+        COLON,
         UNKNOWN
     };
 
+    
+    [[nodiscard]] std::string getTokenTypeName(const Lexer::TokenType type);
+    
     struct Token {
         uint32_t id;
         TokenType type;

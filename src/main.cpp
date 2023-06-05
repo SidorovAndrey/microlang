@@ -11,35 +11,10 @@
 #include "front/AstBuilder.h"
 #include "back/AstVisitor.h"
 
-[[nodiscard]] std::string getTokenTypeName(const Lexer::TokenType type) {
-    switch(type) {
-        case Lexer::TokenType::IDENTIFIER:
-            return "IDENTIFIER";
-        case Lexer::TokenType::INT:
-            return "INT";
-        case Lexer::TokenType::ASSIGN:
-            return "ASSIGN";
-        case Lexer::TokenType::ENDLINE:
-            return "ENDLINE";
-        case Lexer::TokenType::PLUS:
-            return "PLUS";
-        case Lexer::TokenType::MINUS:
-            return "MINUS";
-        case Lexer::TokenType::MULTIPLY:
-            return "MULTIPLY";
-        case Lexer::TokenType::DIVIDE:
-            return "DIVIDE";
-        case Lexer::TokenType::DECLARE_TYPE:
-            return "DECLARE_TYPE";
-        default:
-            return "UNKNOWN";
-    }
-}
-
 void logLexerToken(const std::vector<Lexer::Token>& tokens) {
     for (const auto& token : tokens) {
         std::string formatted = "id: " + std::to_string(token.id);
-        formatted += "\t type: " + getTokenTypeName(token.type);
+        formatted += "\t type: " + Lexer::getTokenTypeName(token.type);
         formatted += "\t at: [" + std::to_string(token.row) + ";" + std::to_string(token.column) + "]";
         formatted += "\t symbol: " + token.symbol;
         Log::write(Log::INFO, formatted);

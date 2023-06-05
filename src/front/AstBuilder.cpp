@@ -4,10 +4,40 @@
 #include "common/Log.h"
 
 Result<std::unique_ptr<AST::Expression>> processDeclaration(int& idx, const std::vector<Lexer::Token>& tokens) {
-    std::unique_ptr<AST::Expression> expression = std::make_unique<AST::VariableDeclarationExpression>(tokens[idx - 1].symbol, tokens[idx + 1].symbol);
+    ++idx;
+    if (idx >= tokens.size()) {
+        return Result<std::unique_ptr<AST::Expression>>::Failure("Unknown variable declaration", nullptr);
+    }
 
-    idx += 2; // skip type name token, set on \n
-    if (tokens[idx].type != Lexer::TokenType::ENDLINE) {
+    if (tokens[idx].type != Lexer::TokenType::IDENTIFIER) {
+        return Result<std::unique_ptr<AST::Expression>>::Failure("Variable declaration must have variable name after \'let\' keyword", nullptr);
+    }
+
+    Lexer::Token name = tokens[idx];
+
+    ++idx;
+    if (idx >= tokens.size()) {
+        return Result<std::unique_ptr<AST::Expression>>::Failure("Unknown variable declaration", nullptr);
+    }
+
+    if (tokens[idx].type != Lexer::TokenType::COLON) {
+        return Result<std::unique_ptr<AST::Expression>>::Failure("Variable declaration must have colon after variable name for type specifying", nullptr);
+    }
+
+    ++idx;
+    if (idx >= tokens.size()) {
+        return Result<std::unique_ptr<AST::Expression>>::Failure("Unknown variable declaration", nullptr);
+    }
+
+    if (tokens[idx].type != Lexer::TokenType::IDENTIFIER) {
+        return Result<std::unique_ptr<AST::Expression>>::Failure("Variable declaration must have colon after variable name for type specifying", nullptr);
+    }
+
+    Lexer::Token type = tokens[idx];
+    std::unique_ptr<AST::Expression> expression = std::make_unique<AST::VariableDeclarationExpression>(name.symbol, type.symbol);
+
+    ++idx;
+    if (idx >= tokens.size() || tokens[idx].type != Lexer::TokenType::ENDLINE) {
         return Result<std::unique_ptr<AST::Expression>>::Failure("Declaration operation must be ended with new line", std::move(expression));
     }
 
@@ -59,14 +89,14 @@ Result<std::unique_ptr<AST::Expression>> processAssign(int& idx, const std::vect
 }
 
 Result<std::unique_ptr<AST::Expression>> processNext(int& idx, const std::vector<Lexer::Token>& tokens) {
-    while (tokens[idx].type != Lexer::TokenType::DECLARE_TYPE && tokens[idx].type != Lexer::TokenType::ASSIGN) {
+    while (tokens[idx].type != Lexer::TokenType::DECLARE_VAR && tokens[idx].type != Lexer::TokenType::ASSIGN) {
         ++idx;
         if (idx >= tokens.size()) {
             return Result<std::unique_ptr<AST::Expression>>::Ok(nullptr);
         }
     }
     Log::write(Log::DEBUG, "Processing token with id = " + std::to_string(tokens[idx].id));
-    if (tokens[idx].type == Lexer::TokenType::DECLARE_TYPE) {
+    if (tokens[idx].type == Lexer::TokenType::DECLARE_VAR) {
         return processDeclaration(idx, tokens);
     } else if (tokens[idx].type == Lexer::TokenType::ASSIGN) {
         return processAssign(idx, tokens);
